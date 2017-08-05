@@ -1,0 +1,23 @@
+{
+  "name": "paint",
+  "version": "1.0.0",
+  "description": "small paint",
+  "main": "index.js",
+  "scripts": {
+    "server": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raja3233/paint.git"
+  },
+  "author": "Raja sekhar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raja3233/paint/issues"
+  },
+  "homepage": "https://github.com/raja3233/paint#readme",
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  }
+}
