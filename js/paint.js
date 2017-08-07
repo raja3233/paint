@@ -2,30 +2,44 @@
 
 
     createElement = function(ele, attributes){
-          if(ele){
-            node = typeof ele == "string"? document.createElement(ele): ele; 
-          }
-          if(attributes){
-              
-              for(var attr in attributes){
-                    if(attributes.hasOwnProperty(attr)){
-                                       
-                        if(attr in node.style)
-                            node.style[attr] = attributes[attr];
-                        else
-                            node.setAttribute(attr, attributes[attr])
-                    }
-              }
-          }
-          if(arguments){
-              for(let i = 2; i < arguments.length; i++){
-                  let child = arguments[i];
-                if(typeof child == "string")
-                    child = document.createTextNode(child);
-                node.appendChild(child);
-              }
-          }
-          return node;
+        if(ele){
+        node = typeof ele == "string"? document.createElement(ele): ele; 
+        }
+        if(attributes){
+            
+            for(var attr in attributes){
+                if(attributes.hasOwnProperty(attr)){
+                                    
+                    if(attr in node.style)
+                        node.style[attr] = attributes[attr];
+                    else
+                        node.setAttribute(attr, attributes[attr])
+                }
+            }
+        }
+        if(arguments){
+            for(let i = 2; i < arguments.length; i++){
+                let child = arguments[i];
+            if(typeof child == "string")
+                child = document.createTextNode(child);
+            node.appendChild(child);
+            }
+        }
+        return node;
+    }
+
+    relativePos = function(event){
+        //clientx , client y gives positions with respect to viewport position of client
+        //getBoundingClientRect() gives position of the box with respect to client;    
+        pos = {
+            x : undefined,
+            y : undefined
+        }
+        var rect = event.target.getBoundingClientRect();          
+        pos.x = event.clientX - rect.left;
+        pos.y = event.clientY - rect.top;
+
+        return pos;
     }
 
     var paintBoard = {
@@ -35,7 +49,7 @@
           background:'gray'
       } ,
       controls : {
-            mainControls:(ctx)=>{
+            fileControls:(ctx)=>{
                 var toolSection = createElement('div', {class:'toolbar-section'});
 
                //File Input for loading image to the canvas.
@@ -104,31 +118,61 @@
                 return toolSection;
             },
 
-            tools:()=>
+            tools:(ctx)=>
             {
                 var toolSection = createElement('div', {class:'toolbar-section'});
 
                 var childToolNodes = Object.create(null);
 
-                childToolNodes.brush = createElement('div', {class:'toolbar-tool pencil-tool'}, "\u270E");
-                childToolNodes.brush.addEventListener('click', function(event){
-                    alert("element clicked");
-                    this.selectedTool = 'brush';
+                //Pencil tool. 
+                // stroke width of pencil can go from 0-5px
+                childToolNodes.pencil = createElement('div', {class:'toolbar-tool pencil-tool'}, "\u270E");
+                childToolNodes.pencil.addEventListener('click', function(event){    
+                                     
+                   let selectSize = document.getElementsByClassName('size')[0].value;
+                   ctx.fillStyle = 'black';
+                   ctx.strokeStyle = 'black'; 
+                   ctx.lineWidth = selectSize * .05;                     
+                   paintBoard.controls.selectedTool = 'pencil';
                 });
+               
+               //Text Tool.
                 childToolNodes.text = createElement('div', {class:'toolbar-tool text-tool'}, "A");
                 childToolNodes.text.addEventListener('click', function(event){
-                    alert("element clicked");
-                    this.selectedTool = 'text';
+                   ctx.fillStyle = 'black';
+                   ctx.strokeStyle = 'black';  
+                    paintBoard.controls.selectedTool = 'text';
                 });
-                childToolNodes.colorPicker = createElement('div', {class:'toolbar-tool color-picker-tool'}, "\uD83D\uDD8C");
-                childToolNodes.colorPicker.addEventListener('click', function(event){
-                    alert("element clicked");
-                    this.selectedTool = 'colorpicker';
+
+                
+                childToolNodes.brush = createElement('div', {class:'toolbar-tool color-picker-tool'}, "\uD83D\uDD8C");               
+                childToolNodes.brush.addEventListener('click', function(event){
+                    let selectSize = document.getElementsByClassName('size')[0].value;
+                    ctx.fillStyle = 'black';
+                    ctx.strokeStyle = 'black'; 
+                    ctx.lineWidth = selectSize * .05; 
+                    ctx.lineWidth = 5 + selectSize * .5; 
+                    paintBoard.controls.selectedTool = 'brush';
+                });
+
+                 childToolNodes.colorPicker = createElement('div', {class:'toolbar-tool pencil-tool'}, "\uD83C\uDFA8");
+                 childToolNodes.colorPicker.addEventListener('click', function(event){
+                     var colorPickerNode = createElement('input',{type:'color'} );
+                     colorPickerNode.click();
+                     colorPickerNode.addEventListener('change', function(){
+                         ctx.fillStyle = colorPickerNode.value;
+                         ctx.strokeStyle = colorPickerNode.value;
+                     });
+                    
                 });
                 childToolNodes.eraser = createElement('div', {class:'toolbar-tool eraser-tool'}, "\u089C");
                 childToolNodes.eraser.addEventListener('click', function(event){
-                    alert("element clicked");
-                    this.slectedTool = 'eraser';
+                    let selectSize = document.getElementsByClassName('size')[0].value;
+                    ctx.fillStyle = 'white';
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = selectSize;
+                    ctx.globarCompositeOperation = 'destination-out';
+                    paintBoard.controls.selectedTool = 'eraser';
                 });
             
 
@@ -143,7 +187,6 @@
             shapes:()=>{
             
                 var toolSection = createElement('div', {class:'toolbar-section'});
-
                 var childShapesNodes = Object.create(null);
                 childShapesNodes.circleNode = createElement('div', {"class":'toolbar-tool shape'}, '\u25CB');
                 childShapesNodes.rectNode = createElement('div', {"class":'toolbar-tool shape'}, '\u25A1');
@@ -159,10 +202,52 @@
                 return toolSection;
             },
 
-            
+            sizes: (ctx)=>{
+                var sizes = [1, 2, 3, 5, 7, 11, 13, 29, 61, 79, 91];
+                var toolSection = createElement('div', {class:'toolbar-section'});
+                var sizeSelectionNode = createElement('select', {"class":'toolbar-tool size'});
 
-            selectedTool : 'brush'
-            
+                sizeSelectionNode.addEventListener('change', function(event){
+                    
+                    ctx.lineWidth = (paintBoard.controls.selectedTool == 'pencil') ? sizeSelectionNode.value * .05:
+                                    (paintBoard.controls.selectedTool == "brush")? sizeSelectionNode.value * .5 + 5:
+                                    sizeSelectionNode.value;
+                    ctx.font = sizeSelectionNode.value + 'px arial';
+                });
+
+                for(let size of sizes){
+                    let optionNode = createElement('option', {value:size}, "size: " + String(size) + 'px');
+                    sizeSelectionNode.appendChild(optionNode);
+                }
+
+                toolSection.appendChild(sizeSelectionNode);
+
+                return toolSection;
+            },
+
+            colors:(ctx)=>{
+                var colors = ['red', 'blue', 'green', 'orange', 'yellow', 'black']
+                var toolSection = createElement('div', {class:'toolbar-section'});
+                colors.forEach(function(color){
+
+                    var colorSelectionNode = createElement('div', {class:'toolbar-tool', style:"background:"+ color +""});
+                    colorSelectionNode.addEventListener('click', function(){
+                    ctx.fillStyle = colorSelectionNode.style.background;
+                    ctx.strokeStyle = colorSelectionNode.style.background;
+                    
+                });
+                    toolSection.appendChild(colorSelectionNode);
+
+                });
+                
+                
+                
+                
+
+                return toolSection;
+
+            },    
+            selectedTool: 'pencil'       
         } ,
 
         
@@ -184,15 +269,24 @@
         var sketchBoard =createElement("div", props, canvas)   
         return  sketchBoard;
       },
-
+      getFooter:function(props){
+        var sketchBoard =createElement("div", props);
+        var toolbarInfo = createElement("div", null, 'Selected Tool: ' +paintBoard.controls.selectedTool);
+        setInterval(function(){
+            toolbarInfo.firstChild.nodeValue = 'Selected Tool: ' + paintBoard.controls.selectedTool.charAt(0).toUpperCase() + 
+                                                                    paintBoard.controls.selectedTool.slice(1);
+        }, 100);
+        sketchBoard.appendChild(toolbarInfo);
+        return  sketchBoard;
+      },
       createCanvas:function(){
           var canvas = {
             canvasEle: null,
             canvasCtx: null,
             init: function(){
                 this.canvasEle = createElement("canvas", {width:'100%', height:'100%'});           
-                this.canvasEle.width = 1024;
-                this.canvasEle.height = 1024;
+                this.canvasEle.width = window.innerWidth;
+                this.canvasEle.height = window.innerHeight;
                 this.canvasCtx = this.canvasEle.getContext('2d');
                 this.ctxConfig();
                 this.bindEvents();
@@ -207,34 +301,68 @@
                     }
                 }
                 else{
-                    if(paintBoard.controls.selectedTool == 'brush')
                     ctx.fillStyle = 'black';
                     ctx.strokeStyle = 'black';
-                    ctx.lineWidth = 1;
+                    ctx.lineWidth = 0.05;
                     ctx.lineCap = 'circle'
                 }
             },
+            
+
             bindEvents:function(){
-                var canvasCtx = this.canvasCtx;
+                var self = this;
+                var canvasCtx = self.canvasCtx;
                 var drag = false;
-                canvasCtx.canvas.addEventListener('mousedown', function(event){         
+                var textbox = false;
+                canvasCtx.canvas.addEventListener('mousedown', function(event){        
                     canvasCtx.beginPath();
-                    canvasCtx.moveTo(event.offsetX - canvasCtx.canvas.getBoundingClientRect().left, event.offsetY-canvasCtx.canvas.getBoundingClientRect().top);
-                    
+                    let pos =relativePos(event);
+                    canvasCtx.moveTo(pos.x, pos.y);
                 });
 
                 canvasCtx.canvas.addEventListener('mousemove', function(event){                   
                     if(drag){
-                        canvasCtx.lineTo(event.offsetX -canvasCtx.canvas.getBoundingClientRect().left, event.offsetY-canvasCtx.canvas.getBoundingClientRect().top);
+                        let pos =relativePos(event);
+                        canvasCtx.lineTo(pos.x, pos.y);                      
                         canvasCtx.stroke();
                     }
             
                 });
 
                 canvasCtx.canvas.addEventListener('click', function(event){ 
-                    drag = !drag;
-                    canvasCtx.beginPath();
-                    canvasCtx.moveTo(event.offsetX -canvasCtx.canvas.getBoundingClientRect().left, event.offsetY-canvasCtx.canvas.getBoundingClientRect().top);
+                    let selectedTool = paintBoard.controls.selectedTool;
+                    if(selectedTool == 'text'){
+                        var pos = relativePos(event);
+                        console.log(event);
+                        let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
+                        input.addEventListener('change',function(event){  
+                            let lineHeight =  ctx.font.split(' ')[0]
+                             pos.y = pos.y + parseInt(/[0-9]+/.exec(lineHeight)[0]); 
+                             console.log(pos.y)  ;   
+                             ctx.fillText(input.value, pos.x, pos.y);
+                        });
+                        if(textbox = !textbox){                      
+                            input.style.left = event.clientX + 'px';
+                            input.style.top = event.clientY + 'px';
+                            input.style["line-height"] = ctx.font.split(' ')[0];
+                            input.style["font-size"] = ctx.font.split(' ')[0];
+                            document.body.insertBefore(input, document.body.childNodes[0]);
+                       
+                        }
+                        else{
+                             document.body.removeChild(document.body.childNodes[0]);
+                        }
+                        
+                        
+                    }   
+                    
+                    else{
+                        drag = !drag;
+                        canvasCtx.beginPath();
+                        let pos =relativePos(event);
+                        canvasCtx.moveTo(pos.x, pos.y);
+                    }
+                   
                     
                 });
             }
@@ -245,18 +373,23 @@
       
       createBoard: function(){
         var paintEle = document.querySelector(".paint");
-        canvas = this.createCanvas(); 
-        var toolBar = this.getToolBar({"width":this.props.width, 
+        canvas = paintBoard.createCanvas(); 
+        var toolBar = paintBoard.getToolBar({"width":paintBoard.props.width, 
                                        "class":'toolbar'
                                        }, canvas.canvasCtx);
-        var drawBoardPanel = this.getSketchBoardPanel({"width":this.props.width, 
+        var drawBoardPanel = paintBoard.getSketchBoardPanel({"width":paintBoard.props.width, 
                                        "height":"90%",
                                        "class":'board-panel'
-                                       }, canvas.canvasEle);
-        createElement(paintEle,this.props, toolBar, drawBoardPanel )     
+                                    }, canvas.canvasEle);
+                                    
+        var footer = paintBoard.getFooter({"width":paintBoard.props.width,
+                                        'class':'paint-footer'
+        });
+        createElement(paintEle,paintBoard.props, toolBar, drawBoardPanel, footer )     
       },
 
     };
 
     paintBoard.createBoard();
+
 })(window, document);

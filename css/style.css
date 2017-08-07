@@ -3,12 +3,16 @@ body{
     padding:0;
 }
 
-.toolbar{
+.toolbar, .paint-footer{
     background:#dbe6f4;
     box-shadow: "0 5px 3px #dbe6f4";
     display:flex;
     flex-direction:row;
     align-items:center;
+}
+.paint-footer{
+    height:3%;
+    justify-content: center;
 }
 .toolbar-section{
     border-right:1px solid #bac2d0;
@@ -16,7 +20,7 @@ body{
     padding:10px;
     display:flex;
     flex-direction:row;
-    max-width:15%;
+    min-width:15%;
     justify-content:center;
     align-items:flex-start;
     align-content:stretch;
@@ -33,18 +37,39 @@ body{
 div.toolbar-tool:hover{
     box-shadow: 0 0 3px black;
 }
-.new, .save, .clear, .text-tool, .eraser-tool, .pencil-tool, .color-picker-tool, .shape{
+.new, .save, .clear, .text-tool, .eraser-tool, .pencil-tool, .color-picker-tool, .shape, .size{
     display:flex;
     align-items:center;
     justify-content:center;
-    flex:1;
-    
+    flex:1;    
+}
+
+.size{
+   max-width:70%;
+   min-width:50px; 
+   background: transparent;
+   border: none;
+   font-size: 14px;
+   max-height: 29px;
+   padding: 5px; /* If you add too much padding here, the options won't show in IE */
+
 }
 
 
 .text-tool, .eraser-tool, .pencil-tool, .color-picker-tool{
     font-size: .8em;
 }
+
+.text-tool-input{
+    z-index: 99;
+    position:absolute;
+    height:40px;
+    border:none;
+    outline: 1px dotted gray; 
+    padding:0;
+}
+
+
 
 .shape{
     font-size:1.5em;
