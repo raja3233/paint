@@ -1,0 +1,55 @@
+body{
+    margin:0;
+    padding:0;
+}
+
+.toolbar{
+    background:#dbe6f4;
+    box-shadow: "0 5px 3px #dbe6f4";
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+}
+.toolbar-section{
+    border-right:1px solid #bac2d0;
+    box-sizing: border-box;
+    padding:10px;
+    display:flex;
+    flex-direction:row;
+    max-width:15%;
+    justify-content:center;
+    align-items:flex-start;
+    align-content:stretch;
+    flex-wrap:wrap;
+}
+.toolbar-tool{  
+    box-shadow: 0 0 1px black;
+    padding:10px;
+    font-size:12px;
+    max-height:5px;
+    margin:2px;
+    cursor:pointer;
+}
+div.toolbar-tool:hover{
+    box-shadow: 0 0 3px black;
+}
+.new, .save, .clear, .text-tool, .eraser-tool, .pencil-tool, .color-picker-tool, .shape{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:1;
+    
+}
+
+
+.text-tool, .eraser-tool, .pencil-tool, .color-picker-tool{
+    font-size: .8em;
+}
+
+.shape{
+    font-size:1.5em;
+}
+.board-panel{
+    box-shadow: "0 5px 3px white";
+    background:white;
+}
