@@ -184,24 +184,7 @@
                 return toolSection;
             },
             
-            shapes:()=>{
-            
-                var toolSection = createElement('div', {class:'toolbar-section'});
-                var childShapesNodes = Object.create(null);
-                childShapesNodes.circleNode = createElement('div', {"class":'toolbar-tool shape'}, '\u25CB');
-                childShapesNodes.rectNode = createElement('div', {"class":'toolbar-tool shape'}, '\u25A1');
-                childShapesNodes.lineNode = createElement('div', {"class":'toolbar-tool shape'}, '\u2015');
-                childShapesNodes.cubicNode = createElement('div', {"class":'toolbar-tool shape'}, '\u223c');
-                childShapesNodes.triangleNode = createElement('div', {"class":'toolbar-tool shape'}, '\u25B3');
-               
-
-                 /* ADD CONTROLS TO THE TOOL SECTION */
-                for(let child in childShapesNodes){
-                    toolSection.appendChild(childShapesNodes[child]);
-                }   
-                return toolSection;
-            },
-
+           
             sizes: (ctx)=>{
                 var sizes = [1, 2, 3, 5, 7, 11, 13, 29, 61, 79, 91];
                 var toolSection = createElement('div', {class:'toolbar-section'});
