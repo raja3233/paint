@@ -1,2 +1,2 @@
 # Paint tool 
-[Check here](raja3233.github.io/paint)
+[Check here](https://raja3233.github.io/paint/)
