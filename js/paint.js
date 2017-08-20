@@ -300,7 +300,7 @@
                 var drag = false;
                 var textbox = false;
 
-                function handleMove(event){
+                function handleMouseMove(event){
                     event.preventDefault();
                      if(drag){
                         let pos =relativePos(event);
@@ -308,7 +308,15 @@
                         canvasCtx.stroke();
                     }
                 }
-
+                function handleTouchMove(event){
+                    event.preventDefault();
+                    console.log('touch move envent raised');
+                    if(drag){
+                        let pos =relativePos(event.targetTouches[0]);
+                        canvasCtx.lineTo(pos.x, pos.y);                      
+                        canvasCtx.stroke();
+                    }
+                }
                 function handleTextTool(){
                      var pos = relativePos(event);
                         let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
@@ -347,6 +355,7 @@
 
                 function handleTouchStart(event){
                      event.preventDefault();
+                    console.log('touch started');
                     let selectedTool = paintBoard.controls.selectedTool;
                     if(selectedTool == 'text'){                    
                         handleTextTool();
@@ -354,7 +363,7 @@
                     else{
                         drag = true;
                         canvasCtx.beginPath();
-                        let pos =relativePos(event);
+                        let pos =relativePos(event.targetTouches[0]);
                         canvasCtx.moveTo(pos.x, pos.y);
                     }    
                 }
@@ -367,9 +376,6 @@
                     }                    
                     else{
                         drag = false;
-                        canvasCtx.beginPath();
-                        let pos =relativePos(event);
-                        canvasCtx.moveTo(pos.x, pos.y);
                     }    
                 }
 
@@ -379,9 +385,9 @@
                     canvasCtx.moveTo(pos.x, pos.y);
                 });
 
-                canvasCtx.canvas.addEventListener('mousemove', handleMove);
+                canvasCtx.canvas.addEventListener('mousemove', handleMouseMove);
 
-                canvasCtx.canvas.addEventListener('touchmove', handleMove);
+                canvasCtx.canvas.addEventListener('touchmove', handleTouchMove);
 
                 canvasCtx.canvas.addEventListener('touchStart', handleTouchStart);
 
