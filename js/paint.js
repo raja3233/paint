@@ -318,13 +318,13 @@
                 }
                 function handleTextTool(event){
                      var pos = relativePos(event);
+                     if(textbox = !textbox){ 
                         let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
                         input.addEventListener('change',function(event){  
                             let lineHeight =  ctx.font.split(' ')[0]
                              pos.y = pos.y + parseInt(/[0-9]+/.exec(lineHeight)[0]);    
                              ctx.fillText(input.value, pos.x, pos.y);
-                        });
-                        if(textbox = !textbox){                      
+                        });                                          
                             input.style.left = event.clientX + 'px';
                             input.style.top = event.clientY + 'px';
                             input.style["line-height"] = ctx.font.split(' ')[0];
@@ -346,6 +346,10 @@
                     
                     else{
                         drag = !drag;
+                        if(textbox){
+                            textbox = false;
+                            document.body.removeChild(document.body.childNodes[0]);
+                        }
                         canvasCtx.beginPath();
                         let pos =relativePos(event);
                         canvasCtx.moveTo(pos.x, pos.y);
@@ -361,6 +365,10 @@
                     }                     
                     else{
                         drag = true;
+                        if(textbox){
+                            textbox = false;
+                            document.body.removeChild(document.body.childNodes[0]);
+                        }                        
                         canvasCtx.beginPath();
                         let pos =relativePos(event.targetTouches[0]);
                         canvasCtx.moveTo(pos.x, pos.y);
