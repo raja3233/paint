@@ -310,8 +310,8 @@
                 }
                 function handleTouchMove(event){
                     event.preventDefault();
-                    console.log('touch move envent raised');
-                    console.log(event.targetTouches);
+                    console.log('touch move event raised');
+                    console.log(event);
                     let pos =relativePos(event.targetTouches[0]);
                     canvasCtx.lineTo(pos.x, pos.y);                      
                     canvasCtx.stroke();
