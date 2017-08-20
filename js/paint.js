@@ -311,12 +311,11 @@
                 function handleTouchMove(event){
                     event.preventDefault();
                     console.log('touch move envent raised');
-                    if(drag){
-                        console.log(event.targetTouches);
-                        let pos =relativePos(event.targetTouches[0]);
-                        canvasCtx.lineTo(pos.x, pos.y);                      
-                        canvasCtx.stroke();
-                    }
+                    console.log(event.targetTouches);
+                    let pos =relativePos(event.targetTouches[0]);
+                    canvasCtx.lineTo(pos.x, pos.y);                      
+                    canvasCtx.stroke();
+                
                 }
                 function handleTextTool(){
                      var pos = relativePos(event);
