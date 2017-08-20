@@ -375,17 +375,7 @@
                     }    
                 }
 
-                function handleTouchEnd(event){
-                     event.preventDefault();
-                    let selectedTool = paintBoard.controls.selectedTool;
-                    if(selectedTool == 'text'){                    
-                        handleTextTool(event.targetTouches[0]);
-                    }                    
-                    else{
-                        console.log("touch end called");
-                        
-                    }    
-                }
+                
 
                 canvasCtx.canvas.addEventListener('mousedown', function(event){        
                     canvasCtx.beginPath();
@@ -398,8 +388,6 @@
                 canvasCtx.canvas.addEventListener('touchmove', handleTouchMove);
 
                 canvasCtx.canvas.addEventListener('touchstart', handleTouchStart);
-
-                canvasCtx.canvas.addEventListener('touchend', handleTouchEnd);
 
                 canvasCtx.canvas.addEventListener('click', handleClick);
             }
