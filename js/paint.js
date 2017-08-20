@@ -309,22 +309,8 @@
                     }
                 }
 
-
-                canvasCtx.canvas.addEventListener('mousedown', function(event){        
-                    canvasCtx.beginPath();
-                    let pos =relativePos(event);
-                    canvasCtx.moveTo(pos.x, pos.y);
-                });
-
-                canvasCtx.canvas.addEventListener('mousemove', handleMove);
-
-                canvasCtx.canvas.addEventListener('touchmove', handleMove);
-
-
-                canvasCtx.canvas.addEventListener('click', function(event){ 
-                    let selectedTool = paintBoard.controls.selectedTool;
-                    if(selectedTool == 'text'){
-                        var pos = relativePos(event);
+                function handleTextTool(){
+                     var pos = relativePos(event);
                         let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
                         input.addEventListener('change',function(event){  
                             let lineHeight =  ctx.font.split(' ')[0]
@@ -342,8 +328,13 @@
                         else{
                              document.body.removeChild(document.body.childNodes[0]);
                         }
-                        
-                        
+                }
+
+                function handleClick(event){
+                    event.preventDefault();
+                    let selectedTool = paintBoard.controls.selectedTool;
+                    if(selectedTool == 'text'){                    
+                        handleTextTool();
                     }   
                     
                     else{
@@ -351,10 +342,52 @@
                         canvasCtx.beginPath();
                         let pos =relativePos(event);
                         canvasCtx.moveTo(pos.x, pos.y);
-                    }
-                   
-                    
+                    }                   
+                }
+
+                function handleTouchStart(event){
+                     event.preventDefault();
+                    let selectedTool = paintBoard.controls.selectedTool;
+                    if(selectedTool == 'text'){                    
+                        handleTextTool();
+                    }                     
+                    else{
+                        drag = true;
+                        canvasCtx.beginPath();
+                        let pos =relativePos(event);
+                        canvasCtx.moveTo(pos.x, pos.y);
+                    }    
+                }
+
+                function handleTouchEnd(event){
+                     event.preventDefault();
+                    let selectedTool = paintBoard.controls.selectedTool;
+                    if(selectedTool == 'text'){                    
+                        handleTextTool();
+                    }                    
+                    else{
+                        drag = false;
+                        canvasCtx.beginPath();
+                        let pos =relativePos(event);
+                        canvasCtx.moveTo(pos.x, pos.y);
+                    }    
+                }
+
+                canvasCtx.canvas.addEventListener('mousedown', function(event){        
+                    canvasCtx.beginPath();
+                    let pos =relativePos(event);
+                    canvasCtx.moveTo(pos.x, pos.y);
                 });
+
+                canvasCtx.canvas.addEventListener('mousemove', handleMove);
+
+                canvasCtx.canvas.addEventListener('touchmove', handleMove);
+
+                canvasCtx.canvas.addEventListener('touchStart', handleTouchStart);
+
+                canvasCtx.canvas.addEventListener('touchend', handleTouchEnd);
+
+                canvasCtx.canvas.addEventListener('click', handleClick);
             }
         }
         canvas.init();
