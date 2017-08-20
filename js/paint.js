@@ -341,7 +341,7 @@
                     event.preventDefault();
                     let selectedTool = paintBoard.controls.selectedTool;
                     if(selectedTool == 'text'){                    
-                        handleTextTool();
+                        handleTextTool(event);
                     }   
                     
                     else{
@@ -357,7 +357,7 @@
                     console.log('touch started');
                     let selectedTool = paintBoard.controls.selectedTool;
                     if(selectedTool == 'text'){                    
-                        handleTextTool();
+                        handleTextTool(event.targetTouches[0]);
                     }                     
                     else{
                         drag = true;
@@ -371,7 +371,7 @@
                      event.preventDefault();
                     let selectedTool = paintBoard.controls.selectedTool;
                     if(selectedTool == 'text'){                    
-                        handleTextTool();
+                        handleTextTool(event.targetTouches[0]);
                     }                    
                     else{
                         console.log("touch end called");
