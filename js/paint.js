@@ -312,6 +312,8 @@
                     event.preventDefault();
                     console.log('touch move event raised');
                     let pos =relativePos(event.targetTouches[0]);
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(pos.x, pos.y);                 
                     canvasCtx.lineTo(pos.x, pos.y);                      
                     canvasCtx.stroke();
                 
@@ -352,20 +354,7 @@
                     }                   
                 }
 
-                function handleTouchStart(event){
-                     event.preventDefault();
-                    console.log('touch started');
-                    let selectedTool = paintBoard.controls.selectedTool;
-                    if(selectedTool == 'text'){                    
-                        handleTextTool();
-                    }                     
-                    else{
-                        drag = true;
-                        canvasCtx.beginPath();
-                        let pos =relativePos(event.targetTouches[0]);
-                        canvasCtx.moveTo(pos.x, pos.y);
-                    }    
-                }
+                
 
                 function handleTouchEnd(event){
                      event.preventDefault();
@@ -375,7 +364,9 @@
                     }                    
                     else{
                         console.log("touch end called");
-                        
+                        canvasCtx.beginPath();
+                        let pos =relativePos(event);
+                        canvasCtx.moveTo(pos.x, pos.y);
                     }    
                 }
 
@@ -389,7 +380,6 @@
 
                 canvasCtx.canvas.addEventListener('touchmove', handleTouchMove);
 
-                canvasCtx.canvas.addEventListener('touchStart', handleTouchStart);
 
                 canvasCtx.canvas.addEventListener('touchend', handleTouchEnd);
 
