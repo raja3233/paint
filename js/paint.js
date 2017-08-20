@@ -316,7 +316,7 @@
                     canvasCtx.stroke();
                 
                 }
-                function handleTextTool(){
+                function handleTextTool(event){
                      var pos = relativePos(event);
                         let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
                         input.addEventListener('change',function(event){  
