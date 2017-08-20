@@ -252,6 +252,7 @@
         var sketchBoard =createElement("div", props, canvas)   
         return  sketchBoard;
       },
+
       getFooter:function(props){
         var sketchBoard =createElement("div", props);
         var toolbarInfo = createElement("div", null, 'Selected Tool: ' +paintBoard.controls.selectedTool);
@@ -262,6 +263,7 @@
         sketchBoard.appendChild(toolbarInfo);
         return  sketchBoard;
       },
+
       createCanvas:function(){
           var canvas = {
             canvasEle: null,
@@ -297,31 +299,36 @@
                 var canvasCtx = self.canvasCtx;
                 var drag = false;
                 var textbox = false;
+
+                function handleMove(event){
+                    event.preventDefault();
+                     if(drag){
+                        let pos =relativePos(event);
+                        canvasCtx.lineTo(pos.x, pos.y);                      
+                        canvasCtx.stroke();
+                    }
+                }
+
+
                 canvasCtx.canvas.addEventListener('mousedown', function(event){        
                     canvasCtx.beginPath();
                     let pos =relativePos(event);
                     canvasCtx.moveTo(pos.x, pos.y);
                 });
 
-                canvasCtx.canvas.addEventListener('mousemove', function(event){                   
-                    if(drag){
-                        let pos =relativePos(event);
-                        canvasCtx.lineTo(pos.x, pos.y);                      
-                        canvasCtx.stroke();
-                    }
-            
-                });
+                canvasCtx.canvas.addEventListener('mousemove', handleMove);
+
+                canvasCtx.canvas.addEventListener('touchmove', handleMove);
+
 
                 canvasCtx.canvas.addEventListener('click', function(event){ 
                     let selectedTool = paintBoard.controls.selectedTool;
                     if(selectedTool == 'text'){
                         var pos = relativePos(event);
-                        console.log(event);
                         let input = createElement('textarea', {type:"text", class:"text-tool-input", 'autofocus':true});
                         input.addEventListener('change',function(event){  
                             let lineHeight =  ctx.font.split(' ')[0]
-                             pos.y = pos.y + parseInt(/[0-9]+/.exec(lineHeight)[0]); 
-                             console.log(pos.y)  ;   
+                             pos.y = pos.y + parseInt(/[0-9]+/.exec(lineHeight)[0]);    
                              ctx.fillText(input.value, pos.x, pos.y);
                         });
                         if(textbox = !textbox){                      
